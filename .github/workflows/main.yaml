@@ -64,6 +64,7 @@ jobs:
           helm template \
           --set image.repository=ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }} \
           --set image.tag=${{ github.sha }} \
+          --namespace cert-manager \
           cert-manager-webhook-hetzner \
           deploy/cert-manager-webhook-hetzner | /usr/local/bin/yq "del(.metadata.labels)" > "deploy/cert-manager-webhook-hetzner.yaml"
 
