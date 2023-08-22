@@ -4,7 +4,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: cert-manager-webhook-hetzner
-  namespace: default
+  namespace: cert-manager
 ---
 # Source: cert-manager-webhook-hetzner/templates/rbac.yaml
 # Grant cert-manager permission to validate using our apiserver
@@ -50,7 +50,7 @@ subjects:
   - apiGroup: ""
     kind: ServiceAccount
     name: cert-manager-webhook-hetzner
-    namespace: default
+    namespace: cert-manager
 ---
 # Source: cert-manager-webhook-hetzner/templates/rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -80,14 +80,14 @@ subjects:
   - apiGroup: ""
     kind: ServiceAccount
     name: cert-manager-webhook-hetzner
-    namespace: "default"
+    namespace: "cert-manager"
 ---
 # Source: cert-manager-webhook-hetzner/templates/rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: cert-manager-webhook-hetzner:secret-reader
-  namespace: default
+  namespace: cert-manager
 rules:
   - apiGroups:
       - ""
@@ -116,14 +116,14 @@ subjects:
   - apiGroup: ""
     kind: ServiceAccount
     name: cert-manager-webhook-hetzner
-    namespace: default
+    namespace: cert-manager
 ---
 # Source: cert-manager-webhook-hetzner/templates/rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: cert-manager-webhook-hetzner:secret-reader
-  namespace: default
+  namespace: cert-manager
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -132,14 +132,14 @@ subjects:
   - apiGroup: ""
     kind: ServiceAccount
     name: cert-manager-webhook-hetzner
-    namespace: default
+    namespace: cert-manager
 ---
 # Source: cert-manager-webhook-hetzner/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: cert-manager-webhook-hetzner
-  namespace: default
+  namespace: cert-manager
 spec:
   type: ClusterIP
   ports:
@@ -156,7 +156,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cert-manager-webhook-hetzner
-  namespace: default
+  namespace: cert-manager
 spec:
   replicas:
   selector:
@@ -172,7 +172,7 @@ spec:
       serviceAccountName: cert-manager-webhook-hetzner
       containers:
         - name: cert-manager-webhook-hetzner
-          image: "ghcr.io/sschaeffner/cert-manager-webhook-hetzner:cc90706a7d0298c04f5e3aa536c2c2d9ea965e1b"
+          image: "ghcr.io/sschaeffner/cert-manager-webhook-hetzner:8e7bdaae04e62f031082936cfbbf3257955bca24"
           imagePullPolicy: IfNotPresent
           args:
             - --tls-cert-file=/tls/tls.crt
@@ -220,14 +220,14 @@ kind: APIService
 metadata:
   name: v1alpha1.acme.yourdomain.tld
   annotations:
-    cert-manager.io/inject-ca-from: "default/cert-manager-webhook-hetzner-webhook-tls"
+    cert-manager.io/inject-ca-from: "cert-manager/cert-manager-webhook-hetzner-webhook-tls"
 spec:
   group: acme.yourdomain.tld
   groupPriorityMinimum: 1000
   versionPriority: 15
   service:
     name: cert-manager-webhook-hetzner
-    namespace: default
+    namespace: cert-manager
   version: v1alpha1
 ---
 # Source: cert-manager-webhook-hetzner/templates/pki.yaml
@@ -236,7 +236,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: cert-manager-webhook-hetzner-ca
-  namespace: "default"
+  namespace: "cert-manager"
 spec:
   secretName: cert-manager-webhook-hetzner-ca
   duration: 43800h # 5y
@@ -251,7 +251,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: cert-manager-webhook-hetzner-webhook-tls
-  namespace: "default"
+  namespace: "cert-manager"
 spec:
   secretName: cert-manager-webhook-hetzner-webhook-tls
   duration: 8760h # 1y
@@ -259,8 +259,8 @@ spec:
     name: cert-manager-webhook-hetzner-ca
   dnsNames:
     - cert-manager-webhook-hetzner
-    - cert-manager-webhook-hetzner.default
-    - cert-manager-webhook-hetzner.default.svc
+    - cert-manager-webhook-hetzner.cert-manager
+    - cert-manager-webhook-hetzner.cert-manager.svc
 ---
 # Source: cert-manager-webhook-hetzner/templates/pki.yaml
 # Create a selfsigned Issuer, in order to create a root CA certificate for
@@ -269,7 +269,7 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: cert-manager-webhook-hetzner-selfsign
-  namespace: "default"
+  namespace: "cert-manager"
 spec:
   selfSigned: {}
 ---
@@ -279,7 +279,7 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: cert-manager-webhook-hetzner-ca
-  namespace: "default"
+  namespace: "cert-manager"
 spec:
   ca:
     secretName: cert-manager-webhook-hetzner-ca
