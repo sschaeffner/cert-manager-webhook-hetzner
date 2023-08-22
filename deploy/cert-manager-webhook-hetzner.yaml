@@ -4,6 +4,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: cert-manager-webhook-hetzner
+  namespace: default
 ---
 # Source: cert-manager-webhook-hetzner/templates/rbac.yaml
 # Grant cert-manager permission to validate using our apiserver
@@ -138,6 +139,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: cert-manager-webhook-hetzner
+  namespace: default
 spec:
   type: ClusterIP
   ports:
@@ -170,7 +172,7 @@ spec:
       serviceAccountName: cert-manager-webhook-hetzner
       containers:
         - name: cert-manager-webhook-hetzner
-          image: "ghcr.io/sschaeffner/cert-manager-webhook-hetzner:32c80b1ebb7621ba715457eb152dcc30cfb3e99f"
+          image: "ghcr.io/sschaeffner/cert-manager-webhook-hetzner:cc90706a7d0298c04f5e3aa536c2c2d9ea965e1b"
           imagePullPolicy: IfNotPresent
           args:
             - --tls-cert-file=/tls/tls.crt
