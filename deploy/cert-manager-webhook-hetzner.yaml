@@ -172,7 +172,7 @@ spec:
       serviceAccountName: cert-manager-webhook-hetzner
       containers:
         - name: cert-manager-webhook-hetzner
-          image: "ghcr.io/sschaeffner/cert-manager-webhook-hetzner:8e7bdaae04e62f031082936cfbbf3257955bca24"
+          image: "ghcr.io/sschaeffner/cert-manager-webhook-hetzner:0522ce0fe23f5db59346f7f533eea7d5920162bc"
           imagePullPolicy: IfNotPresent
           args:
             - --tls-cert-file=/tls/tls.crt
